@@ -1,8 +1,12 @@
 package com.udacity.webcrawler.json;
 
-import java.io.Writer;
-import java.nio.file.Path;
+import java.io.*;
+import java.nio.file.*;
 import java.util.Objects;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
 
 /**
  * Utility class to write a {@link CrawlResult} to file.
@@ -25,10 +29,19 @@ public final class CrawlResultWriter {
    *
    * @param path the file path where the crawl result data should be written.
    */
-  public void write(Path path) {
-    // This is here to get rid of the unused variable warning.
+  public void write(Path path) throws Exception
+  {
+    	// This is here to get rid of the unused variable warning.
     Objects.requireNonNull(path);
+	
     // TODO: Fill in this method.
+	
+	ObjectMapper OM = new ObjectMapper();
+	
+	if( Files.exists(path) )
+		OM.writeValue( Files.newBufferedWriter(path, StandardOpenOption.APPEND), result );
+	else
+		OM.writeValue( Files.newBufferedWriter(path), result );
   }
 
   /**
@@ -36,9 +49,17 @@ public final class CrawlResultWriter {
    *
    * @param writer the destination where the crawl result data should be written.
    */
-  public void write(Writer writer) {
-    // This is here to get rid of the unused variable warning.
+  public void write(Writer writer) throws Exception
+  {
+    	// This is here to get rid of the unused variable warning.
     Objects.requireNonNull(writer);
+	
     // TODO: Fill in this method.
+	
+	ObjectMapper OM = new ObjectMapper();
+	
+	OM.disable(Feature.AUTO_CLOSE_TARGET);
+	
+	OM.writeValue(writer, result);
   }
 }

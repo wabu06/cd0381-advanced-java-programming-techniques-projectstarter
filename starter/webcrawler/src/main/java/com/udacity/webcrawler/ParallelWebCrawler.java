@@ -100,12 +100,6 @@ final class ParallelWebCrawler implements WebCrawler
 		@Override
  		protected void compute()
 		{
-			//urls.stream().map( u -> parserFactory.get(u).parse() ).map( r -> r.getWordCounts().entrySet() )
-			//for( String U: urls )
-			//{
-				
-			//}
-			
 			if( maxDepth == 0 || clock.instant().isAfter(deadline) )
       			return;
 				
@@ -123,7 +117,7 @@ final class ParallelWebCrawler implements WebCrawler
 			PageParser.Result result = parserFactory.get(url).parse();
 			
 			for (String link : result.getLinks())
-      			invoke(  new crawlInternal(clock, parserFactory, link, deadline, maxDepth - 1, counts, visitedUrls) );
+      			new CrawlInternal(clock, parserFactory, link, deadline, maxDepth - 1, counts, visitedUrls, ignoredUrls).invoke();
 			
 			//result.getLinks().stream()
 						//.forEach( u -> invoke(  new crawlInternal(clock, PF, u, deadline, maxDepth - 1, counts, visitedUrls)) );
@@ -151,18 +145,14 @@ final class ParallelWebCrawler implements WebCrawler
 		
     	Set<String> visitedUrls = new CopyOnWriteArraySet<>();
 		
-		//pool.invoke( new CrawlInternal(startingUrls, deadline, maxDepth, counts, visitedUrls) ); 
-		
-		//*****************************************************************
-		
-		List<CrawlInternal> pages = new ArrayList<>();
+		//List<CrawlInternal> pages = new ArrayList<>();
 		
 		CrawlInternal CI;
 		
 		for(String url: startingUrls)
 		{
-			CI = new CrawlInternal(clock, parserFactory, url, deadline, maxDepth, counts, visitedUrls);
-			pages.add(CI);
+			CI = new CrawlInternal(clock, parserFactory, url, deadline, maxDepth, counts, visitedUrls, ignoredUrls);
+			//pages.add(CI);
 			pool.invoke(CI);
 		}
 		

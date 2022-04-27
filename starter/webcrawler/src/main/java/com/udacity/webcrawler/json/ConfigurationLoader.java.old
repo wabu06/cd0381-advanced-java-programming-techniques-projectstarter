@@ -30,15 +30,16 @@ public final class ConfigurationLoader {
   {
     // TODO: Fill in this method.
 	
-	String config;
+	String line, config = "";
 	
-	try
+	try( BufferedReader R = Files.newBufferedReader(path) )
 	{
-		config = Files.lines(path).reduce( (s1, s2) -> s1 + s2).orElse(null);
+		while( ( line = R.readLine() ) != null )
+			config = config + line + "\n";
 	}
 	catch( Exception E )
 	{
-		System.out.println("File I/O Error!!\n");
+		System.out.println("Error reading config file\n");
 		return new CrawlerConfiguration.Builder().build();
 	}
 	
@@ -58,14 +59,16 @@ public final class ConfigurationLoader {
     	// This is here to get rid of the unused variable warning.
     Objects.requireNonNull(reader);
 	
-		// TODO: Fill in this method
-	
 	ObjectMapper OM = new ObjectMapper();
 	
 	OM.disable(Feature.AUTO_CLOSE_SOURCE);
 	
-	return OM.readValue(reader, CrawlerConfiguration.class);
+	CrawlerConfiguration CC = OM.readValue(reader, CrawlerConfiguration.class);
 	
+	return CC;
+	
+    // TODO: Fill in this method
+
     //return new CrawlerConfiguration.Builder().build();
   }
 }

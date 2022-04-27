@@ -35,6 +35,9 @@ public final class ConfigurationLoader {
 	try
 	{
 		config = Files.lines(path).reduce( (s1, s2) -> s1 + s2).orElse(null);
+		
+		if( config == null )
+			throw new Exception("File I/O Error!!\n");
 	}
 	catch( Exception E )
 	{

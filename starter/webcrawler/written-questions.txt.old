@@ -17,10 +17,7 @@ Q2. Your manager ran your crawler on her old personal computer, using the config
 
     (a) Suggest one reason why the sequential web crawler was able to read more web pages than the parallel crawler.
         (Hint: Try setting "parallelism" to 1 in the JSON configs to simulate your manager's computer.)
-		#
-		The Operating System and/or cpu does not support multithreading, and/or she doesn't have a multicore
-		cpu on her old personal computer
-		#	
+
     (b) Suggest one scenario in which the parallel web crawler will almost certainly perform better than the sequential
         crawler. Why will it perform better?
 

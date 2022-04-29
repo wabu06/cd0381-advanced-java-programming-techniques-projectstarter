@@ -35,8 +35,16 @@ final class WordCounts
 	return wordCounts.entrySet()
 			.stream().sorted( new WordCountComparator() )
 			.limit(popularWordCount)
-	.collect
-	( Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> x + y, () -> new LinkedHashMap<String, Integer>() ) );
+			.collect
+			(
+				Collectors.toMap
+				(
+					Map.Entry::getKey,
+					Map.Entry::getValue,
+					(x, y) -> x + y,
+					() -> new LinkedHashMap<String, Integer>()
+				)
+			);
     
     //return topCounts;
   }

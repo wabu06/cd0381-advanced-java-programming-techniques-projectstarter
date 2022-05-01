@@ -41,7 +41,7 @@ final class WordCounts
 				(
 					Map.Entry::getKey,
 					Map.Entry::getValue,
-					(x, y) -> x + y,
+					(x, y) -> 1,
 					() -> new LinkedHashMap<String, Integer>()
 				)
 			);

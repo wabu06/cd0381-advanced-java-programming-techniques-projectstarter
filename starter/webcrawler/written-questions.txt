@@ -10,7 +10,10 @@ Q1. Run the web crawler using the configurations located at src/main/config/writ
     the ParallelWebCrawler.
 
     Why did the parser take more time when run with ParallelWebCrawler?
-
+	#
+	The SequentialWebCrawler is single threaded, and the ParallelWebCrawler is multithreaded, so with the ParallelWebCrawler
+	there will be multiple threads accessing the PageParser, so therefore having multiple threads accessing the PageParser
+	will lead to greater execution times with the ParallelWebCrawler.
 
 Q2. Your manager ran your crawler on her old personal computer, using the configurations from Q1, and she notices that
     the sequential crawler actually outperforms the parallel crawler. She would like to know why.
@@ -34,8 +37,11 @@ Q3. Analyze your method profiler through the lens of Aspect Oriented Programming
 
 Q4. Identify three (3) different design patterns used in this project, and explain which interfaces, classes, and/or
     libraries use or implement those design patterns.
-
+	#
+	1. Creational Patterns, abstract factory in PageParser, and Builder with Configuration
+	2. Behavioral Pattern, Strategy Pattern used by WebCrawler, ParallelWebCrawler, SequentialWebCrawler
+	#
     For each pattern, name one thing about the pattern that you LIKED, and one thing you DISLIKED. If you did not like
     anything, you can name two things you disliked.
-
-
+	liked Builder, and Strategy adds a certain flexabilty to the code
+	abstract factory encapsulates

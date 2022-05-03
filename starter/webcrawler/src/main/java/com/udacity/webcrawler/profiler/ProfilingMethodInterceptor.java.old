@@ -39,8 +39,8 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 	
 	Object result;
 	
-// 	if( method.getName().equals("equals") )
-// 		return delegate == args[0];
+	if( method.getName().equals("equals") )
+		return delegate == args[0];
 	
 	if( method.getAnnotation(Profiled.class) != null )
 	{
@@ -53,6 +53,18 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 				result =  method.invoke(delegate, args);
 			}
 			catch(InvocationTargetException exp)
+			{
+				throw exp.getTargetException();
+			}
+			catch (IllegalAccessException exp)
+			{
+				throw new RuntimeException(exp);
+			}
+			catch( UndeclaredThrowableException exp )
+			{
+				throw exp.getUndeclaredThrowable();
+			}
+			catch( Throwable exp)
 			{
 				throw exp.getCause();
 			}
@@ -72,7 +84,11 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 			}
 			catch(InvocationTargetException exp)
 			{
-				throw exp.getCause();
+				throw exp.getTargetException();
+			}
+			catch (IllegalAccessException exp)
+			{
+				throw new RuntimeException(exp);
 			}
 			finally
 			{
@@ -94,7 +110,16 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 		{
 			throw exp.getTargetException();
 		}
+		catch (IllegalAccessException exp)
+		{
+			throw new RuntimeException(exp);
+		}
+		catch( UndeclaredThrowableException exp )
+		{
+			throw exp.getUndeclaredThrowable();
+		}
 	}
+
     return result;
   }
 }

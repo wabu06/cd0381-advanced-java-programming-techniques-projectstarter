@@ -29,22 +29,41 @@ final class ProfilerImpl implements Profiler
     this.clock = Objects.requireNonNull(clock);
     this.startTime = ZonedDateTime.now(clock);
   }
+  
+  private boolean hasProfiles(Class<?> klass)
+  {
+		//for( Method M: delegate.getClass().getMethods() )
+		for( Method M: klass.getMethods() )
+		{
+			if( M.getAnnotation(Profiled.class) != null )
+				return true;
+		}
+		
+		return false;
+  }
 
   @Override
-  public <T> T wrap(Class<T> klass, T delegate)
+  public <T> T wrap(Class<T> klass, T delegate) throws IllegalArgumentException
   {
     Objects.requireNonNull(klass);
+	
+	if( !hasProfiles(klass) )
+			throw new IllegalArgumentException("No Profiled Method Found");
 
     // TODO: Use a dynamic proxy (java.lang.reflect.Proxy) to "wrap" the delegate in a
     //       ProfilingMethodInterceptor and return a dynamic proxy from this method.
     //       See https://docs.oracle.com/javase/10/docs/api/java/lang/reflect/Proxy.html.
 	
-	return delegate.getClass().cast( Proxy.newProxyInstance
+	//delegate = (Object) delegate;
+	
+	//return delegate.getClass().cast()
+	
+	return (T) Proxy.newProxyInstance
 				(
 					ProfilerImpl.class.getClassLoader(),
 					new Class<?>[] { klass },
 					new ProfilingMethodInterceptor(clock, state, delegate)
-				));
+				);
 
     //return delegate;
   }
@@ -78,6 +97,6 @@ final class ProfilerImpl implements Profiler
     state.write(writer);
     writer.write(System.lineSeparator());
 	
-	writer.close();
+	//writer.close();
   }
 }

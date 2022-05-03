@@ -39,10 +39,12 @@ public final class WebCrawlerMain {
 	
     // TODO: Write the crawl results to a JSON file (or System.out if the file name is empty)
 	
+	Writer console = new BufferedWriter( new OutputStreamWriter(System.out) );
+	
 	String RP = config.getResultPath();
 	
 	if( RP.isEmpty() )
-		resultWriter.write( new BufferedWriter( new OutputStreamWriter(System.out) ) );
+		resultWriter.write(console);
 	else
 		resultWriter.write( Path.of(RP) );
 	
@@ -51,9 +53,11 @@ public final class WebCrawlerMain {
 	String POP = config.getProfileOutputPath();
 	
 	if( POP.isEmpty() )
-		profiler.writeData( new BufferedWriter( new OutputStreamWriter(System.out) ) );
+		profiler.writeData(console);
 	else
 		profiler.writeData( Path.of(POP) );
+	
+	console.close();
   }
 
   public static void main(String[] args) throws Exception {

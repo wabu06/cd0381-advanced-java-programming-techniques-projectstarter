@@ -60,6 +60,8 @@ public final class CrawlResultWriter {
 	
 	OM.disable(Feature.AUTO_CLOSE_TARGET);
 	
+	System.out.println();
 	OM.writeValue(writer, result);
+	System.out.println();
   }
 }

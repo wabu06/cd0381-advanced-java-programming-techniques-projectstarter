@@ -1,0 +1,8 @@
+{
+  "startPages": ["https://www.rpi.edu/"],
+  "ignoredWords": ["^.{1,3}$"],
+  "implementationOverride": "com.udacity.webcrawler.SequentialWebCrawler",
+  "maxDepth": 2,
+  "timeoutSeconds": 1,
+  "popularWordCount": 5
+}

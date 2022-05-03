@@ -29,26 +29,25 @@ final class ProfilerImpl implements Profiler
     this.clock = Objects.requireNonNull(clock);
     this.startTime = ZonedDateTime.now(clock);
   }
-  
-  private boolean hasProfiles(Class<?> klass)
-  {
-		//for( Method M: delegate.getClass().getMethods() )
-		for( Method M: klass.getMethods() )
-		{
-			if( M.getAnnotation(Profiled.class) != null )
-				return true;
-		}
-		
-		return false;
-  }
 
   @Override
   public <T> T wrap(Class<T> klass, T delegate) throws IllegalArgumentException
   {
     Objects.requireNonNull(klass);
 	
-	if( !hasProfiles(klass) )
-			throw new IllegalArgumentException("No Profiled Method Found");
+	boolean found = false;
+	
+	for( Method M: klass.getMethods() )
+	{
+		if( M.getAnnotation(Profiled.class) != null )
+		{
+			found = true;
+			break;
+		}
+	}
+	
+	if(!found)
+		throw new IllegalArgumentException("No Profiled Method Found");
 
     // TODO: Use a dynamic proxy (java.lang.reflect.Proxy) to "wrap" the delegate in a
     //       ProfilingMethodInterceptor and return a dynamic proxy from this method.
@@ -92,7 +91,7 @@ final class ProfilerImpl implements Profiler
   @Override
   public void writeData(Writer writer) throws IOException
   {
-    writer.write("Run at " + RFC_1123_DATE_TIME.format(startTime));
+    writer.write("\nRun at " + RFC_1123_DATE_TIME.format(startTime));
     writer.write(System.lineSeparator());
     state.write(writer);
     writer.write(System.lineSeparator());

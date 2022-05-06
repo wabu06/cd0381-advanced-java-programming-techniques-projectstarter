@@ -31,7 +31,8 @@ public final class WebCrawlerMain {
   @Inject
   private Profiler profiler;
 
-  private void run() throws Exception {
+  private void run() throws Exception
+  {
     Guice.createInjector(new WebCrawlerModule(config), new ProfilerModule()).injectMembers(this);
 
     CrawlResult result = crawler.crawl(config.getStartPages());
@@ -39,29 +40,36 @@ public final class WebCrawlerMain {
 	
     // TODO: Write the crawl results to a JSON file (or System.out if the file name is empty)
 	
-	Writer console = new BufferedWriter( new OutputStreamWriter(System.out) );
+	try( Writer console = new BufferedWriter( new OutputStreamWriter(System.out) ) )
+	{
+		String RP = config.getResultPath();
 	
-	String RP = config.getResultPath();
-	
-	if( RP.isEmpty() )
-		resultWriter.write(console);
-	else
-		resultWriter.write( Path.of(RP) );
+		if( RP.isEmpty() )
+			resultWriter.write(console);
+		else
+			resultWriter.write( Path.of(RP) );
 	
     // TODO: Write the profile data to a text file (or System.out if the file name is empty)
 	
-	String POP = config.getProfileOutputPath();
+		String POP = config.getProfileOutputPath();
 	
-	if( POP.isEmpty() )
-		profiler.writeData(console);
-	else
-		profiler.writeData( Path.of(POP) );
+		if( POP.isEmpty() )
+			profiler.writeData(console);
+		else
+			profiler.writeData( Path.of(POP) );
+	}
+	catch(Throwable T)
+	{
+		T.printStackTrace();
+	}
 	
-	console.close();
+	//console.close();
   }
 
-  public static void main(String[] args) throws Exception {
-    if (args.length != 1) {
+  public static void main(String[] args) throws Exception
+  {
+    if (args.length != 1)
+	{
       System.out.println("Usage: WebCrawlerMain [starting-url]");
       return;
     }

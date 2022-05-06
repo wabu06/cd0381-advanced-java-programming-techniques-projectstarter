@@ -55,7 +55,7 @@ final class ParallelWebCrawler implements WebCrawler
     	this.popularWordCount = popularWordCount;
 		this.maxDepth = maxDepth;
     	this.ignoredUrls = ignoredUrls;
-    	this.pool = new ForkJoinPool( Math.min(threadCount, getMaxParallelism()) );
+    	this.pool = new ForkJoinPool( Math.max(threadCount, getMaxParallelism()) );
   	}
 	
 	public static final class CrawlInternal extends RecursiveAction
@@ -100,14 +100,22 @@ final class ParallelWebCrawler implements WebCrawler
 		@Override
  		protected void compute()
 		{
+			//ForkJoinPool tPool = getPool();
+			
+			//System.out.println( "\nPool Size: " + tPool.getPoolSize() );
+			
+			//System.out.println( "\nTasks: " + tPool.getQueuedSubmissionCount() );
+			
+			//System.out.println( "\nThreads: " + tPool.getRunningThreadCount() );
+			
+			//System.out.println( "\nThread ID: " + Thread.currentThread().getId() );
+			
 			if( maxDepth == 0 || clock.instant().isAfter(deadline) )
       			return;
-				
-			for (Pattern pattern : ignoredUrls)
-			{
-      			if ( pattern.matcher(url).matches() )
-        			return;
-    		}
+							
+			boolean match = ignoredUrls.stream().anyMatch( p -> p.matcher(url).matches() );
+			
+			if(match) return;
 			
     		if( visitedUrls.contains(url) )
       			return;
@@ -145,16 +153,13 @@ final class ParallelWebCrawler implements WebCrawler
 		
     	Set<String> visitedUrls = new CopyOnWriteArraySet<>();
 		
-		//List<CrawlInternal> pages = new ArrayList<>();
+		System.out.println( "\nParallelism: " + pool.getParallelism() );
 		
-		CrawlInternal CI;
+		//CrawlInternal CI;
 		
 		for(String url: startingUrls)
-		{
-			CI = new CrawlInternal(clock, parserFactory, url, deadline, maxDepth, counts, visitedUrls, ignoredUrls);
-			//pages.add(CI);
-			pool.invoke(CI);
-		}
+			pool.invoke( new CrawlInternal(clock, parserFactory, url, deadline, maxDepth, counts, visitedUrls, ignoredUrls) );
+			//pool.invoke(CI);
 		
 		if( counts.isEmpty() )
 		{

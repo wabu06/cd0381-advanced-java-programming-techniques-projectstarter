@@ -11,6 +11,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.List;
 
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 
@@ -31,20 +32,11 @@ final class ProfilerImpl implements Profiler
   }
 
   @Override
-  public <T> T wrap(Class<T> klass, T delegate) throws IllegalArgumentException
+  public <T> T wrap(Class<T> klass, T delegate) //throws IllegalArgumentException
   {
     Objects.requireNonNull(klass);
-	
-	boolean found = false;
-	
-	for( Method M: klass.getMethods() )
-	{
-		if( M.getAnnotation(Profiled.class) != null )
-		{
-			found = true;
-			break;
-		}
-	}
+		
+	boolean found = List.of( klass.getMethods() ).stream().anyMatch( m -> m.getAnnotation(Profiled.class) != null );
 	
 	if(!found)
 		throw new IllegalArgumentException("No Profiled Method Found");

@@ -37,15 +37,29 @@ public final class ConfigurationLoader {
 		config = Files.lines(path).reduce( (s1, s2) -> s1 + s2).orElse(null);
 		
 		if( config == null )
-			throw new Exception("File I/O Error!!\n");
+			throw new Exception("File I/O Error\n");
 	}
 	catch( Exception E )
 	{
-		System.out.println("File I/O Error!!\n");
+		System.out.println("\nFile I/O Error ...");
+		System.out.println("Ending Application ...\n");
+		System.exit(1);
+		
 		return new CrawlerConfiguration.Builder().build();
 	}
 	
-	return this.read( new StringReader(config) );
+	CrawlerConfiguration crawlConfig = null;
+	
+	try( Reader SR = new StringReader(config) )
+	{
+		crawlConfig = this.read(SR);
+	}
+	catch(Throwable T)
+	{
+		T.printStackTrace();
+	}
+	
+	return crawlConfig;
     
 	//return new CrawlerConfiguration.Builder().build();
   }
@@ -67,7 +81,20 @@ public final class ConfigurationLoader {
 	
 	OM.disable(Feature.AUTO_CLOSE_SOURCE);
 	
-	return OM.readValue(reader, CrawlerConfiguration.class);
+	CrawlerConfiguration crawlConfig = null;
+	
+	try
+	{
+		crawlConfig = OM.readValue(reader, CrawlerConfiguration.class);
+	}
+	catch(Throwable T)
+	{
+		System.out.println("\nIncorrectly Formatted Configuration File ...");
+		System.out.println("Ending Application ...\n");
+		System.exit(1);
+	}
+	
+	return crawlConfig;
 	
     //return new CrawlerConfiguration.Builder().build();
   }

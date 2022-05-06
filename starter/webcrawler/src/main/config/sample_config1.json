@@ -2,6 +2,6 @@
   "startPages": ["https://www.space.com/", "https://www.rpi.edu/"],
   "ignoredWords": ["^.{1,3}$"],
   "maxDepth": 4,
-  "timeoutSeconds": 5,
-  "popularWordCount": 15
+  "timeoutSeconds": 15,
+  "popularWordCount": 25
 }

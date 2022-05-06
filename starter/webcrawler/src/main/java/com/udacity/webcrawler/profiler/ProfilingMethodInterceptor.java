@@ -39,9 +39,6 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 	
 	Object result;
 	
-// 	if( method.getName().equals("equals") )
-// 		return delegate == args[0];
-	
 	if( method.getAnnotation(Profiled.class) != null )
 	{
 		if( method.getParameterCount() != 0 )

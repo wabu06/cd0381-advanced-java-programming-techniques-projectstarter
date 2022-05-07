@@ -100,7 +100,7 @@ final class ParallelWebCrawler implements WebCrawler
 		@Override
  		protected void compute()
 		{
-			//ForkJoinPool tPool = getPool();
+			ForkJoinPool tPool = getPool();
 			
 			//System.out.println( "\nPool Size: " + tPool.getPoolSize() );
 			
@@ -125,7 +125,18 @@ final class ParallelWebCrawler implements WebCrawler
 			PageParser.Result result = parserFactory.get(url).parse();
 			
 			for (String link : result.getLinks())
-      			new CrawlInternal(clock, parserFactory, link, deadline, maxDepth - 1, counts, visitedUrls, ignoredUrls).invoke();
+				tPool.invoke( new CrawlInternal
+								(
+									clock,
+									parserFactory,
+									link,
+									deadline,
+									maxDepth - 1,
+									counts,
+									visitedUrls,
+									ignoredUrls
+								));
+      			//new CrawlInternal(clock, parserFactory, link, deadline, maxDepth - 1, counts, visitedUrls, ignoredUrls).invoke();
 			
 			//result.getLinks().stream()
 						//.forEach( u -> invoke(  new crawlInternal(clock, PF, u, deadline, maxDepth - 1, counts, visitedUrls)) );
@@ -155,11 +166,8 @@ final class ParallelWebCrawler implements WebCrawler
 		
 		System.out.println( "\nParallelism: " + pool.getParallelism() );
 		
-		//CrawlInternal CI;
-		
 		for(String url: startingUrls)
 			pool.invoke( new CrawlInternal(clock, parserFactory, url, deadline, maxDepth, counts, visitedUrls, ignoredUrls) );
-			//pool.invoke(CI);
 		
 		if( counts.isEmpty() )
 		{

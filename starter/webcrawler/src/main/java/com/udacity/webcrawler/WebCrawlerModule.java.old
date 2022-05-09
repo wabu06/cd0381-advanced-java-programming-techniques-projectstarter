@@ -67,35 +67,25 @@ public final class WebCrawlerModule extends AbstractModule {
   @Provides
   @Singleton
   @Internal
-  WebCrawler provideRawWebCrawler( @Internal Set<WebCrawler> implementations, @TargetParallelism int targetParallelism )
-  {
+  WebCrawler provideRawWebCrawler(
+      @Internal Set<WebCrawler> implementations,
+      @TargetParallelism int targetParallelism) {
     String override = config.getImplementationOverride();
-    if (!override.isEmpty())
-	{
+    if (!override.isEmpty()) {
       return implementations
           .stream()
           .filter(impl -> impl.getClass().getName().equals(override))
           .findFirst()
           .orElseThrow(() -> new ProvisionException("Implementation not found: " + override));
     }
-	
-	WebCrawler maxParallelism = implementations.stream()
-											.max( (wc1, wc2) -> wc1.getMaxParallelism() - wc2.getMaxParallelism() ).get();
-	
-	return implementations
-        .stream()
-        .filter(impl -> targetParallelism <= impl.getMaxParallelism())
-        .findFirst()
-        .orElse(maxParallelism);
-    
-	/* return implementations
+    return implementations
         .stream()
         .filter(impl -> targetParallelism <= impl.getMaxParallelism())
         .findFirst()
         .orElseThrow(
             () -> new ProvisionException(
                 "No implementation able to handle parallelism = \"" +
-                    config.getParallelism() + "\".")); */
+                    config.getParallelism() + "\"."));
   }
 
   @Provides

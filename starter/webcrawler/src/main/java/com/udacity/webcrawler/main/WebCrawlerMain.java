@@ -70,7 +70,7 @@ public final class WebCrawlerMain {
   {
     if (args.length != 1)
 	{
-      System.out.println("Usage: WebCrawlerMain [starting-url]");
+      System.out.println("Usage: WebCrawlerMain [json config file]");
       return;
     }
 

@@ -3,3 +3,4 @@ target/
 *.iml
 profileData*.txt
 crawlResults*.json
+task.log

@@ -89,7 +89,7 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 		}
 		catch(InvocationTargetException exp)
 		{
-			throw exp.getTargetException();
+			throw exp.getCause();
 		}
 	}
     return result;

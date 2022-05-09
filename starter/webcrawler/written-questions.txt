@@ -42,10 +42,13 @@ Q4. Identify three (3) different design patterns used in this project, and expla
 	#
 	1. Creational Patterns, abstract factory in PageParser, and Builder with Configuration
 	2. Behavioral Pattern, Strategy Pattern used by WebCrawler, ParallelWebCrawler, SequentialWebCrawler
-	3. Dependency Injection, used in the creation of instances of the ParallelWebCrawler class, and SequentialWebCrawler class
+	3. Dependency Injection, used in the creation of instances of the ParallelWebCrawler class, the SequentialWebCrawler class
+	   and the Profiler class
 	#
     For each pattern, name one thing about the pattern that you LIKED, and one thing you DISLIKED. If you did not like
     anything, you can name two things you disliked.
+	#
 	liked Builder, and Strategy adds a certain flexabilty to the code
 	abstract factory encapsulates
-	Dependency Injection facilitates the creation of objects, especially when the object's dependacies are themselves other objects
+
+	Dependency Injection facilitates the configurability of objects, but requires more effort to code.

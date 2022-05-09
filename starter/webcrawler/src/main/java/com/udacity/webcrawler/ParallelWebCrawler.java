@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 
 import java.util.regex.Pattern;
 
+import java.io.*;
+import java.nio.file.*;
+
 
 
 /**
@@ -29,7 +32,29 @@ import java.util.regex.Pattern;
  */
 final class ParallelWebCrawler implements WebCrawler
 {
-  	private final Clock clock;
+  	static Writer logWriter;
+	
+	static void taskLogger(ForkJoinPool tPool, long id) throws IOException
+	{
+		if( (tPool == null) && (logWriter != null) )
+		{
+			logWriter.close();
+			return;
+		}
+
+		if( logWriter == null )
+			logWriter = Files.newBufferedWriter( Path.of("task.log") );
+			
+		logWriter.write( "\nPool Size: " + tPool.getPoolSize() );
+			
+		logWriter.write( "\nTasks: " + tPool.getQueuedSubmissionCount() );
+			
+		logWriter.write( "\nThreads: " + tPool.getRunningThreadCount() );
+			
+		logWriter.write("\nThread ID: " +  id + "\n");
+	}
+	
+	private final Clock clock;
 	private final PageParserFactory parserFactory;
   	private final Duration timeout;
   	private final int popularWordCount;
@@ -102,13 +127,16 @@ final class ParallelWebCrawler implements WebCrawler
 		{
 			ForkJoinPool tPool = getPool();
 			
-			//System.out.println( "\nPool Size: " + tPool.getPoolSize() );
+			long id = Thread.currentThread().getId();
 			
-			//System.out.println( "\nTasks: " + tPool.getQueuedSubmissionCount() );
-			
-			//System.out.println( "\nThreads: " + tPool.getRunningThreadCount() );
-			
-			//System.out.println( "\nThread ID: " + Thread.currentThread().getId() );
+			try
+			{
+				taskLogger(tPool, id);
+			}
+			catch(IOException exp)
+			{
+				System.out.println( "\nCould not open log file - " + exp.getMessage() );
+			}
 			
 			if( maxDepth == 0 || clock.instant().isAfter(deadline) )
       			return;
@@ -168,6 +196,15 @@ final class ParallelWebCrawler implements WebCrawler
 		
 		for(String url: startingUrls)
 			pool.invoke( new CrawlInternal(clock, parserFactory, url, deadline, maxDepth, counts, visitedUrls, ignoredUrls) );
+		
+		try
+		{
+			taskLogger(null, 0);
+		}
+		catch(IOException exp)
+		{
+			System.out.println( "\nCould not open log file - " + exp.getMessage() );
+		}
 		
 		if( counts.isEmpty() )
 		{

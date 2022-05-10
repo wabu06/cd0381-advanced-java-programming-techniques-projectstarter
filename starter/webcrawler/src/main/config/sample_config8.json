@@ -1,0 +1,8 @@
+{
+  "startPages": ["https://www.udacity.com/", "https://www.rpi.edu/"],
+  "ignoredWords": ["^.{1,3}$"],
+  "parallelism": 12,
+  "maxDepth": 4,
+  "timeoutSeconds": 10,
+  "popularWordCount": 5
+}

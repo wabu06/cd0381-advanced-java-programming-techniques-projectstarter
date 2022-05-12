@@ -39,9 +39,19 @@ public final class CrawlResultWriter {
 	ObjectMapper OM = new ObjectMapper();
 	
 	if( Files.exists(path) )
-		OM.writeValue( Files.newBufferedWriter(path, StandardOpenOption.APPEND), result );
+	{
+		try( Writer jsonWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND) )
+		{
+			OM.writeValue(jsonWriter, result);
+		}
+	}
 	else
-		OM.writeValue( Files.newBufferedWriter(path), result );
+	{
+		try( Writer jsonWriter = Files.newBufferedWriter(path) )
+		{
+			OM.writeValue(jsonWriter, result);
+		}
+	}
   }
 
   /**

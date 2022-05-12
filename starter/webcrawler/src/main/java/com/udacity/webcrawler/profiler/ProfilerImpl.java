@@ -65,19 +65,26 @@ final class ProfilerImpl implements Profiler
     // TODO: Write the ProfilingState data to the given file path. If a file already exists at that
     //       path, the new data should be appended to the existing file.
 	
-	Writer writer;
-	
-	if( Files.exists(path) )
-		writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND);
-	else
-		writer = Files.newBufferedWriter(path);
-	
-	writer.write("Run at " + RFC_1123_DATE_TIME.format(startTime));
-    writer.write(System.lineSeparator());
-    state.write(writer);
-    writer.write(System.lineSeparator());
-	
-	writer.close();
+		if( Files.exists(path) )
+		{
+			try( Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND) )
+			{
+				writer.write("Run at " + RFC_1123_DATE_TIME.format(startTime));
+    			writer.write(System.lineSeparator());
+    			state.write(writer);
+    			writer.write(System.lineSeparator());
+			}
+		}
+		else
+		{
+			try( Writer writer = Files.newBufferedWriter(path) )
+			{
+				writer.write("Run at " + RFC_1123_DATE_TIME.format(startTime));
+    			writer.write(System.lineSeparator());
+    			state.write(writer);
+    			writer.write(System.lineSeparator());
+			}
+		}
   }
 
   @Override
@@ -87,7 +94,5 @@ final class ProfilerImpl implements Profiler
     writer.write(System.lineSeparator());
     state.write(writer);
     writer.write(System.lineSeparator());
-	
-	//writer.close();
   }
 }

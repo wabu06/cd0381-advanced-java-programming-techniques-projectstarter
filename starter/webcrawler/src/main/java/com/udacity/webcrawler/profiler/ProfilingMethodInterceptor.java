@@ -53,6 +53,10 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 			{
 				throw exp.getCause();
 			}
+			catch (IllegalAccessException exp)
+			{
+          		throw new RuntimeException(exp);
+        	}
 			finally
 			{
 				passed = Duration.between( start, clock.instant() );
@@ -71,6 +75,10 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 			{
 				throw exp.getCause();
 			}
+			catch (IllegalAccessException exp)
+			{
+          		throw new RuntimeException(exp);
+        	}
 			finally
 			{
 				passed = Duration.between( start, clock.instant() );
@@ -91,6 +99,10 @@ final class ProfilingMethodInterceptor implements InvocationHandler
 		{
 			throw exp.getCause();
 		}
+		catch (IllegalAccessException exp)
+		{
+          	throw new RuntimeException(exp);
+        }
 	}
     return result;
   }

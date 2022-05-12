@@ -145,15 +145,15 @@ final class ParallelWebCrawler implements WebCrawler
 			
 			if(match) return;
 			
-    		if( visitedUrls.contains(url) )
+    		if( !visitedUrls.add(url) )
       			return;
 
-    		visitedUrls.add(url);
+    		//visitedUrls.add(url);
 			
 			PageParser.Result result = parserFactory.get(url).parse();
 			
 			for (String link : result.getLinks())
-				tPool.invoke( new CrawlInternal
+				tPool.execute( new CrawlInternal
 								(
 									clock,
 									parserFactory,
@@ -164,10 +164,11 @@ final class ParallelWebCrawler implements WebCrawler
 									visitedUrls,
 									ignoredUrls
 								));
-      			//new CrawlInternal(clock, parserFactory, link, deadline, maxDepth - 1, counts, visitedUrls, ignoredUrls).invoke();
+			
+      		//new CrawlInternal(clock, parserFactory, link, deadline, maxDepth - 1, counts, visitedUrls, ignoredUrls).invoke();
 			
 			//result.getLinks().stream()
-						//.forEach( u -> invoke(  new crawlInternal(clock, PF, u, deadline, maxDepth - 1, counts, visitedUrls)) );
+					//.forEach( u -> invoke(  new crawlInternal(clock, PF, u, deadline, maxDepth - 1, counts, visitedUrls)) );
 			
 			for ( Map.Entry<String, Integer> e : result.getWordCounts().entrySet() )
 			{
@@ -195,7 +196,23 @@ final class ParallelWebCrawler implements WebCrawler
 		System.out.println( "\nParallelism: " + pool.getParallelism() );
 		
 		for(String url: startingUrls)
-			pool.invoke( new CrawlInternal(clock, parserFactory, url, deadline, maxDepth, counts, visitedUrls, ignoredUrls) );
+			pool.execute( new CrawlInternal
+							(
+								clock,
+								parserFactory,
+								url,
+								deadline,
+								maxDepth,
+								counts,
+								visitedUrls,
+								ignoredUrls
+							));
+		
+		while(true)
+		{
+			if( pool.isQuiescent() )
+				break;
+		}
 		
 		try
 		{

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+java -cp target/udacity-webcrawler-1.0.jar com.udacity.webcrawler.main.WebCrawlerMain $1
+

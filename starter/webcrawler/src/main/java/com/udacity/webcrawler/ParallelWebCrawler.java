@@ -34,7 +34,7 @@ final class ParallelWebCrawler implements WebCrawler
 {
   	static Writer logWriter;
 	
-	static void taskLogger(ForkJoinPool tPool, long id) throws IOException
+	static synchronized void taskLogger(ForkJoinPool tPool, long id) throws IOException
 	{
 		if( (tPool == null) && (logWriter != null) )
 		{
@@ -213,6 +213,11 @@ final class ParallelWebCrawler implements WebCrawler
 			if( pool.isQuiescent() )
 				break;
 		}
+		
+		pool.shutdown();
+		
+		//while(true)
+			//{ pool.isQuiescent() == true ? break : continue; }
 		
 		try
 		{
